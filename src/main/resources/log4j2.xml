@@ -1,0 +1,69 @@
+<Configuration>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%-5p %d [%t] %c: %m%n"/>
+        </Console>
+        <File name="Manheim-API-File" fileName="../out/manheim-api.log">
+            <PatternLayout>
+                <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+            </PatternLayout>
+        </File>
+    </Appenders>
+
+    <Loggers>
+
+        <!-- CXF is used heavily by Mule for web services -->
+        <AsyncLogger name="org.apache.cxf" level="WARN">
+        </AsyncLogger>
+
+        <!-- Apache Commons tend to make a lot of noise which can clutter the log-->
+        <AsyncLogger name="org.apache" level="WARN">
+        </AsyncLogger>
+        <AsyncLogger name="org.apache.activemq" level="INFO">
+        </AsyncLogger>
+
+        <!-- Reduce startup noise -->
+        <AsyncLogger name="org.springframework.beans.factory" level="NONE">
+        </AsyncLogger>
+
+        <!-- Mule classes -->
+        <AsyncLogger name="org.mule.config.factories" level="ERROR">
+        </AsyncLogger>
+        <AsyncLogger name="org.mule.module.http" level="DEBUG">
+        </AsyncLogger>
+        <AsyncLogger name="org.mule.module.db.internal.domain.type.MetadataDbTypeManager" level="NONE">
+        </AsyncLogger>
+        <AsyncLogger name="com.mulesoft.module.batch.engine.queue.BatchQueueLoader" level="NONE">
+        </AsyncLogger>
+        <AsyncLogger name="com.mulesoft.module.batch.engine.DefaultBatchEngine" level="NONE">
+        </AsyncLogger>
+        <AsyncLogger name="org.mule.lifecycle.AbstractLifecycleManager" level="NONE">
+        </AsyncLogger>
+        <AsyncLogger name="org.mule.module.db" level="INFO">
+        </AsyncLogger>
+        <AsyncLogger name="org.mule.transport" level="NONE">
+        </AsyncLogger>
+        <AsyncLogger name="org.mule" level="NONE">
+
+        </AsyncLogger>
+        <!-- org.mule.processor -->
+        <AsyncLogger name="com.mulesoft" level="NONE">
+        </AsyncLogger>
+
+        <AsyncLogger name="org.mule.construct" level="NONE">
+        </AsyncLogger>
+
+        <AsyncLogger name="com.mulesoft.mule.transport.jms.EeJmsMessageDispatche" level="NONE">
+        </AsyncLogger>
+
+        <AsyncLogger name="com.rms.mule.transformer" level="INFO">
+        </AsyncLogger>
+
+
+        <AsyncRoot level="INFO">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="Manheim-API-File"/>
+        </AsyncRoot>
+    </Loggers>
+
+</Configuration>
