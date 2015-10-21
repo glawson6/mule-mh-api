@@ -50,7 +50,9 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
 
     <flow name="testCreateSubscriberMap">
         <http:listener config-ref="httpManheimEventListenerConfig" path="/testCreateSubscriberMap" doc:name="HTTP"
-                       allowedMethods="GET"/>
+                       allowedMethods="POST"/>
+        <set-variable variableName="email" value="#[(payload.email != null)?payload.email:'Greg.Lawson@rmsautomotive.com']"/>
+        <set-variable variableName="callbackURL" value="#[(payload.callbackURL != null)?payload.callbackURL:'${manheimEventListenerCallbackURL}']"/>
         <flow-ref name="getAccessTokenMap" doc:name="getAccessToken"/>
         <set-payload doc:name="Set Payload" value="#[payload['accessToken']]"/>
         <logger level="INFO" doc:name="Logger" message="Got AccessToken message #[message] with payload #[payload]" category="testCreateSubscriberMap"/>
@@ -73,14 +75,14 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
     </flow>
 
     <flow name="getAccessTokenMap">
-        <!--set-payload value="#['grant_type=password&amp;username=bmw.salesforce&amp;password=C9CCBA8C74c9&amp;client_Id=bmw.salesforce&amp;client_secret=pass123']"/-->
-
+        <set-payload value="#[{'grant_type':'client_credentials'}]"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
         <http:request config-ref="httpManheimEventSubscriberTokenRequestConfig"
                       doc:name="Query user resource using token" parseResponse="false"
                       method="POST" sendBodyMode="ALWAYS"
                       path="token">
             <http:request-builder>
-                <http:header headerName="Content-Type" value="application/x-www-form-urlencoded"/>
+                <http:header headerName="Content-Type" value="application/json"/>
                 <http:header headerName="Cache-Control" value="no-cache"/>
             </http:request-builder>
         </http:request>
@@ -96,7 +98,7 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
             <set-payload value="#[{'authorization':'${manheimEventListenerCallbackAuthorization}'}]"
                          doc:name="Enricher Set Headers"/>
         </enricher>
-        <set-payload value="#[{'callback':'${manheimEventListenerCallbackURL}', 'headers':flowVars.headers}]"
+        <set-payload value="#[{'callback':flowVars.callbackURL, 'headers':flowVars.headers, 'email':flowVars.email}]"
                      doc:name="Set Payload"/>
         <json:object-to-json-transformer doc:name="Object to JSON"/>
         <logger category="createSubscriberMap" message="Payload sent to Manheim API #[payload]" level="INFO"/>
